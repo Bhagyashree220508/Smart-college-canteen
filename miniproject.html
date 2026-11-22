@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart College Canteen</title>
+
+  <!-- Bootstrap CSS only (no Bootstrap JavaScript is used) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    /* ===== COLOUR THEME: Deep Teal + Amber ===== */
+    :root {
+      --teal: #0cd8c7;
+      --teal-dark: #04a197;
+      --teal-deep: #03645f;
+      --amber: #f59e0b;
+      --amber-dark: #d97706;
+      --mint: #ecfdf5;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: #f7fcfb;
+      color: #12312f;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* ===== Navbar ===== */
+    .navbar { background: #ffffff; }
+    .brand-color { color: var(--teal); }
+    .nav-link { font-weight: 600; }
+    .nav-link:hover { color: var(--amber-dark); }
+
+    /* ===== Buttons ===== */
+    .btn-teal {
+      background: var(--teal); color: #fff; border: 1px solid var(--teal);
+      transition: transform 0.2s;
+    }
+    .btn-teal:hover { background: var(--teal-dark); color: #fff; transform: translateY(-2px); }
+
+    .btn-amber {
+      background: var(--amber); color: #3a2400; border: 1px solid var(--amber);
+      font-weight: bold; transition: transform 0.2s;
+    }
+    .btn-amber:hover { background: var(--amber-dark); color: #fff; transform: translateY(-2px); }
+    .btn-amber:active { transform: scale(0.95); }
+
+    /* ===== Hero section ===== */
+    .hero {
+      background: linear-gradient(130deg, var(--teal-deep), var(--teal));
+      border-radius: 24px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {                      /* decorative moving circle */
+      content: "";
+      position: absolute;
+      width: 240px; height: 240px;
+      top: -80px; right: -60px;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, 0.2);
+      animation: drift 8s ease-in-out infinite;
+    }
+    .hero .text-secondary { color: #c8ece7 !important; }
+    .highlight { color: var(--amber); }
+    .hero-img {
+      width: 100%; height: 310px; object-fit: cover;
+      border-radius: 18px;
+      border: 4px solid rgba(255, 255, 255, 0.25);
+      animation: floaty 5s ease-in-out infinite;     /* floating animation */
+      position: relative;
+    }
+    .hero-text { animation: fadeUp 1s ease; }        /* text fades in */
+
+    .stat {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 12px; padding: 8px 16px;
+    }
+    .stat strong { display: block; font-size: 1.3rem; color: var(--amber); }
+
+    /* ===== Menu ===== */
+    .section-heading { font-weight: 800; }
+    .section-tag { color: var(--amber-dark); font-weight: bold; text-transform: uppercase; font-size: 0.8rem; }
+
+    .filter-btn {
+      border: 1px solid #bfe6e1; background: #fff; color: var(--teal-dark);
+      border-radius: 50px; padding: 8px 20px; font-weight: bold;
+    }
+    .filter-btn:hover { background: var(--mint); }
+    .filter-btn.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+    .item { animation: popIn 0.6s ease; }            /* cards pop in */
+
+    .food-card {
+      border: 0; border-radius: 18px; overflow: hidden; height: 100%;
+      box-shadow: 0 5px 22px rgba(18, 49, 47, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .food-card:hover {                                /* card lifts on hover */
+      transform: translateY(-8px);
+      box-shadow: 0 16px 32px rgba(15, 118, 110, 0.25);
+    }
+    .img-box { overflow: hidden; height: 175px; position: relative; }
+    .food-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .food-card:hover .food-img { transform: scale(1.12); }   /* image zooms on hover */
+
+    .emoji-tile {
+      height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4.5rem;
+      transition: transform 0.4s;
+    }
+    .food-card:hover .emoji-tile { transform: scale(1.2) rotate(-6deg); }
+    .bg-snacks   { background: linear-gradient(135deg, #fff3d6, #ffe2a8); }
+    .bg-meals    { background: linear-gradient(135deg, #d9f5ef, #b5e8dd); }
+    .bg-drinks   { background: linear-gradient(135deg, #e1f0ff, #c3dcfb); }
+    .bg-desserts { background: linear-gradient(135deg, #ffe4ec, #ffc7d7); }
+
+    .cat-badge {
+      position: absolute; top: 10px; left: 10px; z-index: 2;
+      background: rgba(8, 48, 46, 0.85); color: #fff;
+      font-size: 0.72rem; padding: 4px 10px; border-radius: 50px;
+    }
+    .food-price { color: var(--teal); font-size: 1.2rem; font-weight: 800; }
+
+    /* ===== Cart ===== */
+    .cart-box { background: #fff; border: 1px solid #d5ebe8; border-radius: 18px; }
+    .cart-btn {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid var(--teal); background: #fff; color: var(--teal);
+      font-weight: bold;
+    }
+    .cart-btn:hover { background: var(--teal); color: #fff; }
+
+    /* ===== Pickup time / schedule order ===== */
+    .pickup-box {
+      background: var(--mint);
+      border: 1px solid #bfe6e1;
+      border-radius: 14px;
+    }
+    .pickup-option {
+      display: block; height: 100%;
+      background: #fff; border: 2px solid #d5ebe8; border-radius: 12px;
+      padding: 10px 14px; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .pickup-option:hover { border-color: var(--teal); }
+    .pickup-option.selected { border-color: var(--teal-dark); background: #f0fffd; }
+
+    .chip-btn {                                       /* quick time buttons */
+      border: 1px solid #bfe6e1; background: #fff; color: var(--teal-dark);
+      border-radius: 50px; padding: 5px 14px; font-size: 0.85rem; font-weight: bold;
+    }
+    .chip-btn:hover { background: var(--teal); color: #fff; }
+    .chip-btn:disabled { opacity: 0.4; cursor: not-allowed; background: #fff; color: var(--teal-dark); }
+
+    #scheduleArea { animation: fadeUp 0.4s ease; }
+
+    /* small message shown when an item is added */
+    #addMessage {
+      position: fixed; bottom: 20px; right: 20px; z-index: 999;
+      background: #1a9c3f; color: #fff;
+      padding: 12px 20px; border-radius: 10px;
+      display: none;
+      animation: popIn 0.3s ease;
+    }
+
+    /* ===== Confirmation ===== */
+    .confirmation {
+      background: #effaf2; border: 1px solid #cdebd4;
+      border-radius: 18px; display: none;               /* hidden until order is placed */
+    }
+    .tick {
+      width: 80px; height: 80px; border-radius: 50%; margin: 0 auto;
+      background: #1a9c3f; color: #fff; font-size: 2.8rem;
+      display: flex; align-items: center; justify-content: center;
+      animation: popIn 0.6s ease;
+    }
+
+    footer { background: var(--teal-deep); color: #fff; }
+
+    /* ===== Animations (CSS only) ===== */
+    @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+    @keyframes drift  { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-25px, 20px); } }
+    @keyframes popIn  { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 767px) {
+      .hero-img { height: 220px; }
+      .hero { border-radius: 16px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ================= NAVIGATION BAR ================= -->
+  <nav class="navbar navbar-expand-lg navbar-light shadow-sm sticky-top">
+    <div class="container py-2">
+      <a class="navbar-brand fw-bold" href="#home">🍽️ <span class="brand-color">Smart</span> College Canteen</a>
+
+      <div class="ms-auto d-flex align-items-center flex-wrap gap-2">
+        <a class="nav-link px-2" href="#home">Home</a>
+        <a class="nav-link px-2" href="#menu">Menu</a>
+        <a class="btn btn-teal rounded-pill" href="#cart">
+          🛒 Cart (<span id="cartCount">0</span>)
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4 py-lg-5">
+
+    <!-- ================= HOME SECTION ================= -->
+    <section id="home" class="hero p-4 p-lg-5 mb-5">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-6 hero-text">
+          <span class="badge text-bg-warning rounded-pill mb-3">CAMPUS FOOD CORNER</span>
+          <h1 class="display-5 fw-bold">
+            Fresh Food.<br>
+            <span class="highlight">Happy Students.</span>
+          </h1>
+          <p class="lead text-secondary mt-3">
+            Order tasty and affordable food from your college canteen. Add items to your cart and skip the queue!
+          </p>
+          <a href="#menu" class="btn btn-amber btn-lg rounded-pill px-4 mt-2">Explore Menu</a>
+
+          <div class="d-flex gap-3 mt-4 flex-wrap">
+            <div class="stat"><strong>16</strong>Food Items</div>
+            <div class="stat"><strong>₹15</strong>Starting Price</div>
+            <div class="stat"><strong>100%</strong>Veg</div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <img class="hero-img"
+               src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1000&q=85"
+               alt="Fresh food bowl">
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= MENU SECTION ================= -->
+     <nav>
+<li class="nav-item">
+  <a class="nav-link fw-semibold text-success" href="login.html">Login</a>
+</li>
+</nav>
+    <section id="menu" class="mb-5">
+      <div class="mb-4">
+        <p class="section-tag mb-1">Tasty choices</p>
+        <h2 class="section-heading">Our Food Menu</h2>
+        <p class="text-secondary">Choose a category, then click "Add to Cart" on your favourite items.</p>
+      </div>
+
+      <!-- Category buttons: each one calls the filterMenu() function -->
+      <div class="d-flex flex-wrap gap-2 mb-4">
+        <button class="filter-btn active" onclick="filterMenu('all', this)">All Items</button>
+        <button class="filter-btn" onclick="filterMenu('snacks', this)">🥪 Snacks</button>
+        <button class="filter-btn" onclick="filterMenu('meals', this)">🍛 Meals</button>
+        <button class="filter-btn" onclick="filterMenu('drinks', this)">🥤 Drinks</button>
+        <button class="filter-btn" onclick="filterMenu('desserts', this)">🍨 Desserts</button>
+      </div>
+
+      <div class="row g-4">
+
+        <!-- ===================== SNACKS ===================== -->
+
+        <!-- Food item 1 -->
+        <div class="col-sm-6 col-lg-3 item snacks">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Snacks</span>
+              <img class="food-img"
+                   src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=700&q=80"
+                   alt="Vegetable sandwich">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Veg Sandwich</h5>
+              <p class="text-secondary small">Fresh vegetables with cheese.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹50</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Veg Sandwich', 50)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food item 2 -->
+        <div class="col-sm-6 col-lg-3 item snacks">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Snacks</span>
+              <img class="food-img"
+                   src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=700&q=80"
+                   alt="Samosas">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Samosa (2 pcs)</h5>
+              <p class="text-secondary small">A crispy and tasty snack.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹30</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Samosa (2 pcs)', 30)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food item 3 -->
+        <div class="col-sm-6 col-lg-3 item snacks">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Snacks</span>
+              <img class="food-img"
+                   src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=700&q=80"
+                   alt="Vegetarian burger">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Veg Burger</h5>
+              <p class="text-secondary small">Burger with a vegetable patty.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹70</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Veg Burger', 70)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food item 4 -->
+        <div class="col-sm-6 col-lg-3 item snacks">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Snacks</span>
+              <img class="food-img"
+                   src="https://www.onelovelylife.com/wp-content/uploads/2026/01/Crispy-Oven-Fries15-2.jpg"
+                   alt="french fries">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">French Fries</h5>
+              <p class="text-secondary small">Crispy golden fries with ketchup.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹60</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('French Fries', 60)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===================== MEALS ===================== -->
+
+        <!-- Food item 5 -->
+        <div class="col-sm-6 col-lg-3 item meals">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Meals</span>
+              <img class="food-img"
+                   src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=700&q=80"
+                   alt="Indian vegetarian meal">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Veg Thali</h5>
+              <p class="text-secondary small">A filling and delicious meal.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹100</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Veg Thali', 100)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food item 6 -->
+        <div class="col-sm-6 col-lg-3 item meals">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Meals</span>
+              <img class="food-img"
+                   src="https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=700&q=80"
+                   alt="Dosa">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Masala Dosa</h5>
+              <p class="text-secondary small">South Indian potato masala dosa.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹80</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Masala Dosa', 80)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food item 7 -->
+        <div class="col-sm-6 col-lg-3 item meals">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Meals</span>
+              <img class="food-img"
+                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXFIhXiqaaKx0splUZoe7MIWqlYTQVTEF3T9v2SiW9VlU6EPhYwb8tUEY&s=10"
+                   alt="Idli Sambar">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Idli Sambar</h5>
+              <p class="text-secondary small">Soft idlis with tasty sambar.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹55</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Idli Sambar', 55)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food item 8 -->
+        <div class="col-sm-6 col-lg-3 item meals">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Meals</span>
+              <img class="food-img"
+                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-1_d0RDorLVeTEgDNTJnB-5BPkjSlvemo-SAfIgMfmfWxVGO-VSymL2H5&s=10"
+                   alt="Chole Bhature">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Chole Bhature</h5>
+              <p class="text-secondary small">Spicy chole with fluffy bhature.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹75</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Chole Bhature', 75)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===================== DRINKS ===================== -->
+
+        <!-- Food item 9 -->
+        <div class="col-sm-6 col-lg-3 item drinks">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Drinks</span>
+              <img class="food-img"
+                   src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=700&q=80"
+                   alt="Cold coffee">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Cold Coffee</h5>
+              <p class="text-secondary small">Chilled coffee for your break.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹60</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Cold Coffee', 60)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food item 10 -->
+        <div class="col-sm-6 col-lg-3 item drinks">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Drinks</span>
+               <img class="food-img"
+                   src="https://sattvakitchen.com/wp-content/uploads/2024/05/SWEET-LIME-SODA-shutterstock_2309599743-copy-Copy-copy.jpg"
+                   alt="Fresh Lime Soda">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Fresh Lime Soda</h5>
+              <p class="text-secondary small">A refreshing lime drink.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹35</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Fresh Lime Soda', 35)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food item 11 -->
+        <div class="col-sm-6 col-lg-3 item drinks">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Drinks</span>
+              <img class="food-img"
+                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQckgBTPxtxsP-YPJeW14Zef7cAB8elcNoV-FdmOXekwQ&s=10"
+                   alt="Masala Chai">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Masala Chai</h5>
+              <p class="text-secondary small">Hot ginger and cardamom tea.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹15</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Masala Chai', 15)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food item 12 -->
+        <div class="col-sm-6 col-lg-3 item drinks">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Drinks</span>
+              <img class="food-img"
+                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8S8Xq7aMbOqJ0p_IVy7RX2KOdJbQBx7OqbIOTiDeECyqmo1rH4IB2GWw&s=10"
+                   alt="Mango Shake">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Mango Shake</h5>
+              <p class="text-secondary small">Thick and creamy mango shake.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹70</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Mango Shake', 70)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===================== DESSERTS ===================== -->
+
+        <!-- Food item 13 -->
+        <div class="col-sm-6 col-lg-3 item desserts">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Desserts</span>
+              <img class="food-img"
+                   src="https://inredberry.com/wp-content/uploads/2023/10/Gulab-Jamun-2-Pcs.png"
+                   alt="Gulab Jamun (2 pcs)">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Gulab Jamun (2 pcs)</h5>
+              <p class="text-secondary small">Soft sweet dumplings in syrup.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹40</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Gulab Jamun (2 pcs)', 40)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food item 14 -->
+        <div class="col-sm-6 col-lg-3 item desserts">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Desserts</span>
+              <img class="food-img"
+                   src="https://larochere.in/wp-content/uploads/2022/12/642101-1.jpg"
+                   alt="Ice Cream Cup">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Ice Cream Cup</h5>
+              <p class="text-secondary small">Vanilla, chocolate or strawberry.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹45</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Ice Cream Cup', 45)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food item 15 -->
+        <div class="col-sm-6 col-lg-3 item desserts">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Desserts</span>
+                <img class="food-img"
+                   src="https://kreamz.in/wp-content/uploads/2024/07/truffle-pastry.webp"
+                   alt="Chocolate Pastry">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Chocolate Pastry</h5>
+              <p class="text-secondary small">Soft and rich chocolate pastry.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹50</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Chocolate Pastry', 50)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food item 16 -->
+        <div class="col-sm-6 col-lg-3 item desserts">
+          <div class="card food-card">
+            <div class="img-box">
+              <span class="cat-badge">Desserts</span>
+              <img class="food-img"
+                   src="https://jessicainthekitchen.com/wp-content/uploads/2022/07/Donuts6286.jpg"
+                   alt="Glazed Donut">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="fw-bold">Glazed Donut</h5>
+              <p class="text-secondary small">Sweet donut with chocolate glaze.</p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="food-price">₹35</span>
+                <button class="btn btn-amber btn-sm rounded-pill" onclick="addToCart('Glazed Donut', 35)">+ Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= CART SECTION ================= -->
+    <section id="cart" class="mb-5">
+      <p class="section-tag mb-1">Order summary</p>
+      <h2 class="section-heading mb-3">Shopping Cart</h2>
+
+      <div class="cart-box p-3 p-md-4">
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Food Item</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th class="text-end">Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <!-- JavaScript fills this table body -->
+            <tbody id="cartBody"></tbody>
+          </table>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center border-top pt-3">
+          <span class="fw-bold">Grand Total</span>
+          <span class="food-price" id="grandTotal">₹0</span>
+        </div>
+
+        <!-- ============ PICKUP TIME (ORDER NOW / SCHEDULE) ============ -->
+        <div class="pickup-box p-3 mt-4">
+          <h5 class="fw-bold mb-1">⏰ When do you want your order?</h5>
+          <p class="text-secondary small mb-3">
+            In class right now? Schedule your order and collect it from the counter at your break time.
+          </p>
+
+          <div class="row g-2">
+            <div class="col-sm-6">
+              <label class="pickup-option selected" id="optNow">
+                <input type="radio" name="pickup" value="now" checked onchange="setPickupMode('now')">
+                <strong class="ms-1">Order Now</strong>
+                <div class="small text-secondary ms-4">Ready in about <span id="waitText">15</span> minutes</div>
+              </label>
+            </div>
+            <div class="col-sm-6">
+              <label class="pickup-option" id="optLater">
+                <input type="radio" name="pickup" value="later" onchange="setPickupMode('later')">
+                <strong class="ms-1">Schedule for Later</strong>
+                <div class="small text-secondary ms-4">Choose the time you want to collect it</div>
+              </label>
+            </div>
+          </div>
+
+          <!-- This part is hidden until "Schedule for Later" is selected -->
+          <div id="scheduleArea" class="mt-3" style="display: none;">
+            <label for="pickupTime" class="form-label fw-semibold mb-1">Collection time (today)</label>
+
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <input type="time" id="pickupTime" class="form-control" style="max-width: 170px;"
+                     onchange="checkPickupTime()">
+              <span class="small text-secondary">or quick pick:</span>
+              <button type="button" class="chip-btn" data-mins="30" onclick="quickPickup(30)">In 30 min</button>
+              <button type="button" class="chip-btn" data-mins="60" onclick="quickPickup(60)">In 1 hour</button>
+              <button type="button" class="chip-btn" data-mins="120" onclick="quickPickup(120)">In 2 hours</button>
+            </div>
+
+            <!-- Shows hints and error messages about the chosen time -->
+            <div id="pickupMsg" class="small mt-2"></div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn btn-outline-danger rounded-pill px-4" onclick="clearCart()">Clear Cart</button>
+          <button id="placeBtn" class="btn btn-amber btn-lg rounded-pill flex-grow-1" onclick="placeOrder()">Place Order</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CONFIRMATION SECTION ================= -->
+    <section id="confirmation" class="confirmation text-center p-4 p-md-5 mb-4">
+      <div class="tick">✓</div>
+      <h2 class="section-heading mt-3">Thank You!</h2>
+      <p class="text-secondary mb-2" id="confirmMessage">Your order has been placed successfully.</p>
+      <p class="mb-1">Order Number: <strong id="orderNumber"></strong></p>
+      <p class="mb-1">Pickup Time: <strong id="orderPickup"></strong></p>
+      <p class="fw-bold">Order Total: <span id="orderTotal"></span></p>
+      <a href="#menu" class="btn btn-outline-success rounded-pill px-4">Back to Menu</a>
+    </section>
+
+  </main>
+
+  <!-- Small message that appears when an item is added -->
+  <div id="addMessage"></div>
+
+  <footer class="py-4">
+    <div class="container d-flex flex-column flex-md-row justify-content-between gap-2">
+      <div>
+        <strong>Smart College Canteen</strong>
+        <div class="small opacity-75">Fresh food for happy students.</div>
+      </div>
+  </footer>
+
+
+  <!-- ============================================================
+       BASIC JAVASCRIPT
+       Only simple things are used here: variables, arrays,
+       functions, if statements and for loops.
+       ============================================================ -->
+  <script>
+
+    // Three arrays store the cart. Position 0 of each array
+    // belongs to the same food item, position 1 to the next, etc.
+    var cartNames = [];     // names of foods in the cart
+    var cartPrices = [];    // price of each food
+    var cartQty = [];       // quantity of each food
+
+
+    // ---------- 1. ADD TO CART ----------
+    function addToCart(name, price) {
+      var found = false;
+
+      // check if this food is already in the cart
+      for (var i = 0; i < cartNames.length; i++) {
+        if (cartNames[i] == name) {
+          cartQty[i] = cartQty[i] + 1;     // already there, so increase quantity
+          found = true;
+        }
+      }
+
+      // if it was not in the cart, add it as a new item
+      if (found == false) {
+        cartNames.push(name);
+        cartPrices.push(price);
+        cartQty.push(1);
+      }
+
+      showCart();
+      showMessage(name + " added to cart!");
+    }
+
+
+    // ---------- 2. INCREASE / DECREASE / REMOVE ----------
+    function increase(index) {
+      cartQty[index] = cartQty[index] + 1;
+      showCart();
+    }
+
+    function decrease(index) {
+      cartQty[index] = cartQty[index] - 1;
+      if (cartQty[index] == 0) {
+        removeItem(index);                 // quantity became 0, so remove item
+      } else {
+        showCart();
+      }
+    }
+
+    function removeItem(index) {
+      cartNames.splice(index, 1);          // splice removes 1 element at this position
+      cartPrices.splice(index, 1);
+      cartQty.splice(index, 1);
+      showCart();
+    }
+
+    function clearCart() {
+      cartNames = [];
+      cartPrices = [];
+      cartQty = [];
+      showCart();
+    }
+
+
+    // ---------- 3. SHOW THE CART ON THE PAGE ----------
+    function showCart() {
+      var rows = "";
+      var grandTotal = 0;
+      var totalItems = 0;
+
+      for (var i = 0; i < cartNames.length; i++) {
+        var lineTotal = cartPrices[i] * cartQty[i];
+        grandTotal = grandTotal + lineTotal;
+        totalItems = totalItems + cartQty[i];
+
+        rows = rows + "<tr>";
+        rows = rows + "<td>" + cartNames[i] + "</td>";
+        rows = rows + "<td>₹" + cartPrices[i] + "</td>";
+        rows = rows + "<td>";
+        rows = rows + "<button class='cart-btn' onclick='decrease(" + i + ")'>-</button> ";
+        rows = rows + "<strong>" + cartQty[i] + "</strong> ";
+        rows = rows + "<button class='cart-btn' onclick='increase(" + i + ")'>+</button>";
+        rows = rows + "</td>";
+        rows = rows + "<td class='text-end'>₹" + lineTotal + "</td>";
+        rows = rows + "<td><button class='btn btn-sm text-danger' onclick='removeItem(" + i + ")'>Remove</button></td>";
+        rows = rows + "</tr>";
+      }
+
+      // if the cart has no items, show a message
+      if (cartNames.length == 0) {
+        rows = "<tr><td colspan='5' class='text-center text-secondary py-4'>Your cart is empty. Add some food from the menu!</td></tr>";
+      }
+
+      document.getElementById("cartBody").innerHTML = rows;
+      document.getElementById("grandTotal").innerHTML = "₹" + grandTotal;
+      document.getElementById("cartCount").innerHTML = totalItems;
+    }
+
+
+    // ---------- 4. PICKUP TIME (ORDER NOW / SCHEDULE FOR LATER) ----------
+
+    // >>> Change these three values to match your canteen <<<
+    var OPEN_TIME = "08:00";    // canteen opens (24-hour format)
+    var CLOSE_TIME = "17:00";   // last time an order can be collected
+    var MIN_WAIT = 15;          // minutes the canteen needs to prepare an order
+
+    var pickupMode = "now";     // either "now" or "later"
+
+    // turns "14:30" into minutes since midnight (870)
+    function toMinutes(timeText) {
+      var parts = timeText.split(":");
+      return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    }
+
+    // turns minutes since midnight (870) into "14:30" (the format a time box uses)
+    function toTimeText(minutes) {
+      var h = Math.floor(minutes / 60);
+      var m = minutes % 60;
+      if (h < 10) { h = "0" + h; }
+      if (m < 10) { m = "0" + m; }
+      return h + ":" + m;
+    }
+
+    // turns "14:30" into "2:30 PM" so it is easy to read
+    function toNiceTime(timeText) {
+      var h = parseInt(timeText.split(":")[0]);
+      var m = timeText.split(":")[1];
+      var ampm = "AM";
+      if (h >= 12) { ampm = "PM"; }
+      if (h > 12) { h = h - 12; }
+      if (h == 0) { h = 12; }
+      return h + ":" + m + " " + ampm;
+    }
+
+    // current time as minutes since midnight
+    function nowInMinutes() {
+      var now = new Date();
+      return now.getHours() * 60 + now.getMinutes();
+    }
+
+    // the earliest time (in minutes) an order can be scheduled for right now
+    function earliestPickup() {
+      var earliest = nowInMinutes() + MIN_WAIT;
+      if (earliest < toMinutes(OPEN_TIME)) {
+        earliest = toMinutes(OPEN_TIME);        // canteen is not open yet
+      }
+      return earliest;
+    }
+
+    // time for a quick-pick button: now + some minutes, rounded up to the next 5 minutes
+    function quickTarget(mins) {
+      var target = nowInMinutes() + mins;
+      if (target < earliestPickup()) {
+        target = earliestPickup();
+      }
+      return Math.ceil(target / 5) * 5;
+    }
+
+    // shows a hint / error under the time box. type = "error", "ok" or "info"
+    function showPickupMessage(text, type) {
+      var box = document.getElementById("pickupMsg");
+      box.innerHTML = text;
+      if (type == "error") {
+        box.className = "small mt-2 text-danger fw-semibold";
+      } else if (type == "ok") {
+        box.className = "small mt-2 text-success fw-semibold";
+      } else {
+        box.className = "small mt-2 text-secondary";
+      }
+    }
+
+    // switch between "Order Now" and "Schedule for Later"
+    function setPickupMode(mode) {
+      pickupMode = mode;
+
+      if (mode == "later") {
+        document.getElementById("scheduleArea").style.display = "block";
+        document.getElementById("optLater").className = "pickup-option selected";
+        document.getElementById("optNow").className = "pickup-option";
+        updateScheduleLimits();
+        document.getElementById("placeBtn").innerHTML = "Schedule Order";
+      } else {
+        document.getElementById("scheduleArea").style.display = "none";
+        document.getElementById("optNow").className = "pickup-option selected";
+        document.getElementById("optLater").className = "pickup-option";
+        document.getElementById("placeBtn").innerHTML = "Place Order";
+      }
+    }
+
+    // set the allowed range of the time box and switch off quick buttons that are too late
+    function updateScheduleLimits() {
+      var input = document.getElementById("pickupTime");
+      var earliest = earliestPickup();
+      var closing = toMinutes(CLOSE_TIME);
+
+      if (earliest > closing) {
+        // too late in the day for any more pickups
+        input.disabled = true;
+        showPickupMessage("Sorry, no more pickup slots today. The canteen closes at " + toNiceTime(CLOSE_TIME) + ".", "error");
+      } else {
+        input.disabled = false;
+        input.min = toTimeText(earliest);
+        input.max = CLOSE_TIME;
+        showPickupMessage("Earliest pickup right now: " + toNiceTime(toTimeText(earliest)) +
+                          " &nbsp;|&nbsp; Last pickup today: " + toNiceTime(CLOSE_TIME), "info");
+      }
+
+      var chips = document.getElementsByClassName("chip-btn");
+      for (var i = 0; i < chips.length; i++) {
+        var mins = parseInt(chips[i].getAttribute("data-mins"));
+        chips[i].disabled = (quickTarget(mins) > closing);
+      }
+    }
+
+    // fill the time box from a quick-pick button
+    function quickPickup(mins) {
+      document.getElementById("pickupTime").value = toTimeText(quickTarget(mins));
+      checkPickupTime();
+    }
+
+    // check the chosen time. Returns true if it is fine, false if not
+    function checkPickupTime() {
+      var value = document.getElementById("pickupTime").value;
+
+      if (value == "") {
+        showPickupMessage("Please choose a collection time.", "error");
+        return false;
+      }
+
+      var chosen = toMinutes(value);
+      var earliest = earliestPickup();
+      var closing = toMinutes(CLOSE_TIME);
+
+      if (earliest > closing) {
+        showPickupMessage("Sorry, no more pickup slots today. The canteen closes at " + toNiceTime(CLOSE_TIME) + ".", "error");
+        return false;
+      }
+
+      if (chosen > closing) {
+        showPickupMessage("The canteen closes at " + toNiceTime(CLOSE_TIME) + ". Please pick an earlier time.", "error");
+        return false;
+      }
+
+      if (chosen < earliest) {
+        showPickupMessage("That time is too early. The earliest pickup right now is " + toNiceTime(toTimeText(earliest)) + ".", "error");
+        return false;
+      }
+
+      showPickupMessage("✔ Your order will be ready to collect at " + toNiceTime(value) + ".", "ok");
+      return true;
+    }
+
+    // put the pickup options back to "Order Now" (used after an order is placed)
+    function resetPickup() {
+      document.getElementsByName("pickup")[0].checked = true;
+      document.getElementById("pickupTime").value = "";
+      setPickupMode("now");
+    }
+
+
+    // ---------- 5. PLACE ORDER ----------
+    function placeOrder() {
+      if (cartNames.length == 0) {
+        alert("Your cart is empty! Please add some food first.");
+        return;
+      }
+
+      // work out the pickup time text and the thank-you message
+      var pickupText = "";
+      var thanksText = "";
+
+      if (pickupMode == "later") {
+        // stop if the chosen time is missing or not allowed
+        if (checkPickupTime() == false) {
+          return;
+        }
+        pickupText = toNiceTime(document.getElementById("pickupTime").value);
+        thanksText = "Your order is scheduled! Please collect it from the counter at " + pickupText + ".";
+      } else {
+        pickupText = "As soon as it is ready (about " + MIN_WAIT + " mins)";
+        thanksText = "Your order has been placed successfully.";
+      }
+
+      // calculate the total
+      var total = 0;
+      for (var i = 0; i < cartNames.length; i++) {
+        total = total + cartPrices[i] * cartQty[i];
+      }
+
+      // make a random 4-digit order number
+      var orderNo = Math.floor(Math.random() * 9000) + 1000;
+
+      document.getElementById("orderNumber").innerHTML = "SCC" + orderNo;
+      document.getElementById("orderPickup").innerHTML = pickupText;
+      document.getElementById("confirmMessage").innerHTML = thanksText;
+      document.getElementById("orderTotal").innerHTML = "₹" + total;
+
+      // show the confirmation section (it was hidden in CSS)
+      document.getElementById("confirmation").style.display = "block";
+
+      clearCart();
+      resetPickup();
+      window.location.href = "#confirmation";     // scroll to confirmation
+    }
+
+
+    // ---------- 6. CATEGORY FILTER ----------
+    function filterMenu(category, clickedButton) {
+      var items = document.getElementsByClassName("item");
+
+      for (var i = 0; i < items.length; i++) {
+        if (category == "all") {
+          items[i].style.display = "block";
+        } else if (items[i].className.indexOf(category) != -1) {
+          items[i].style.display = "block";       // this item matches the category
+        } else {
+          items[i].style.display = "none";        // hide the other items
+        }
+      }
+
+      // highlight the clicked button
+      var buttons = document.getElementsByClassName("filter-btn");
+      for (var j = 0; j < buttons.length; j++) {
+        buttons[j].className = "filter-btn";
+      }
+      clickedButton.className = "filter-btn active";
+    }
+
+
+    // ---------- 7. SMALL "ADDED" MESSAGE ----------
+    function showMessage(text) {
+      var box = document.getElementById("addMessage");
+      box.innerHTML = "✔ " + text;
+      box.style.display = "block";
+
+      // hide the message again after 1.5 seconds (1500 milliseconds)
+      setTimeout(function () {
+        box.style.display = "none";
+      }, 1500);
+    }
+
+
+    // when the page first opens: show the empty cart and the preparation time
+    document.getElementById("waitText").innerHTML = MIN_WAIT;
+    showCart();
+
+  </script>
+
+</body>
+</html>

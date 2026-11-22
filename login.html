@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Smart College Canteen</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://jsdelivr.net" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://jsdelivr.net" rel="stylesheet">
+  <!-- Google Font: Poppins -->
+  <link href="https://googleapis.com" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f3f7f6 0%, #e4efe9 100%);
+      min-height: 100vh;
+    }
+
+    .login-card {
+      border: none;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(20, 108, 83, 0.12);
+    }
+
+    /* Left Branding Panel */
+    .brand-panel {
+      background: linear-gradient(145deg, #146c53 0%, #0d4b39 100%);
+      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-panel::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      background: rgba(245, 166, 35, 0.15);
+      border-radius: 50%;
+      top: -60px;
+      right: -60px;
+    }
+
+    .brand-panel::after {
+      content: "";
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+      bottom: -40px;
+      left: -40px;
+    }
+
+    .badge-campus {
+      background-color: #f5a623;
+      color: #1a1a1a;
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.5px;
+      padding: 6px 14px;
+      border-radius: 50px;
+      display: inline-block;
+    }
+
+    /* CSS-Only Role Switcher */
+    .role-tabs input[type="radio"] {
+      display: none;
+    }
+
+    .role-tabs label {
+      cursor: pointer;
+      padding: 8px 18px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #555;
+      transition: all 0.25s ease;
+    }
+
+    .role-tabs input[type="radio"]:checked + label {
+      background-color: #146c53;
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(20, 108, 83, 0.25);
+    }
+
+    /* Input Styling */
+    .form-control {
+      border-radius: 12px;
+      border: 1.5px solid #e0e6e4;
+      padding: 12px 15px;
+      font-size: 0.92rem;
+      transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+      border-color: #146c53;
+      box-shadow: 0 0 0 4px rgba(20, 108, 83, 0.1);
+    }
+
+    /* Primary Button */
+    .btn-canteen {
+      background-color: #f5a623;
+      color: #1a1a1a;
+      font-weight: 700;
+      border: none;
+      border-radius: 50px;
+      padding: 13px;
+      font-size: 0.95rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .btn-canteen:hover {
+      background-color: #e59614;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(245, 166, 35, 0.35);
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(6px);
+      border-radius: 14px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .footer-bar {
+      background-color: #146c53;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body class="d-flex flex-column">
+
+  <!-- Top Navigation -->
+  <nav class="navbar navbar-light bg-white shadow-sm px-4 py-3">
+    <div class="container">
+      <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="miniproject.html" style="color: #146c53;">
+        <i class="bi bi-cup-hot-fill text-warning fs-4"></i>
+        <span>Smart College Canteen</span>
+      </a>
+      <a href="miniproject.html" class="btn btn-outline-success rounded-pill px-3 btn-sm fw-semibold">
+        <i class="bi bi-arrow-left me-1"></i> Back to Menu
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Login Section -->
+  <main class="container my-auto py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-9 col-xl-8">
+        <div class="card login-card">
+          <div class="row g-0">
+
+            <!-- Left Info / Visual Side -->
+            <div class="col-md-5 brand-panel p-4 p-lg-5 d-flex flex-column justify-content-between">
+              <div>
+                <span class="badge-campus mb-3">CAMPUS FOOD CORNER</span>
+                <h3 class="fw-bold mb-2">Fresh Food.<br><span style="color: #f5a623;">Skip the Queue.</span></h3>
+                <p class="small opacity-75 mb-4">
+                  Log in with your college ID to pre-order hot meals, snacks, and drinks right from class.
+                </p>
+              </div>
+
+              <!-- Quick Highlights matching your homepage -->
+              <div class="d-flex gap-2 mt-3">
+                <div class="stat-box flex-fill text-center">
+                  <div class="fw-bold text-warning">100%</div>
+                  <div style="font-size: 0.72rem;">Pure Veg</div>
+                </div>
+                <div class="stat-box flex-fill text-center">
+                  <div class="fw-bold text-warning">₹15+</div>
+                  <div style="font-size: 0.72rem;">Pocket Friendly</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Form Side -->
+            <div class="col-md-7 bg-white p-4 p-lg-5">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                  <h4 class="fw-bold mb-0 text-dark">Welcome Back!</h4>
+                  <small class="text-muted">Sign in to your canteen account</small>
+                </div>
+
+                <!-- Pure CSS Role Switcher -->
+                <div class="role-tabs bg-light p-1 rounded-pill d-inline-flex">
+                  <input type="radio" name="role" id="studentRole" checked>
+                  <label for="studentRole">Student</label>
+
+                  <input type="radio" name="role" id="staffRole">
+                  <label for="staffRole">Staff</label>
+                </div>
+              </div>
+
+              <!-- Pure HTML Redirect Form -->
+              <form action="miniproject.html" method="GET">
+                <div class="mb-3">
+                  <label for="collegeId" class="form-label fw-semibold small text-secondary">
+                    <i class="bi bi-person-badge me-1 text-success"></i> College Roll No. / Email
+                  </label>
+                  <input type="text" class="form-control" id="collegeId" name="user" placeholder="e.g., CS2026045 or name@college.edu" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="password" class="form-label fw-semibold small text-secondary">
+                    <i class="bi bi-lock me-1 text-success"></i> Password
+                  </label>
+                  <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="rememberMe">
+                    <label class="form-check-label small text-muted" for="rememberMe">
+                      Remember me
+                    </label>
+                  </div>
+                  <a href="#forgot" class="small text-decoration-none fw-semibold" style="color: #146c53;">
+                    Forgot password?
+                  </a>
+                </div>
+
+                <button type="submit" class="btn btn-canteen w-100 mb-3">
+                  Login & Explore Menu <i class="bi bi-arrow-right-circle ms-1"></i>
+                </button>
+
+                <p class="text-center small text-muted mb-0">
+                  First time ordering? 
+                  <a href="miniproject.html" class="fw-bold text-decoration-none" style="color: #146c53;">
+                    Continue as Guest
+                  </a>
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer-bar py-3 px-4 mt-auto">
+    <div class="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+      <span><strong>Smart College Canteen</strong> — Fresh food for happy students.</span>
+    </div>
+  </footer>
+
+</body>
+</html>
